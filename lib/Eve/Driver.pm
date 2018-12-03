@@ -149,7 +149,7 @@ version as reference):
 
         created_at    DATETIME(6) NOT NULL,
         
-        PRIMARY KEY ent_events_pk (entity_id. version, entity_type, event_type)
+        PRIMARY KEY ent_events_pk (entity_id, entity_type, version, event_type)
     ) ENGINE=InnoDB DEFAULT CHARSET=binary;
 
 The C<event_id> is a simple sequence/auto_increment field to be used as the
