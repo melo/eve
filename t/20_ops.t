@@ -18,7 +18,7 @@ ok(!$obj, 'no chairs found with ID `noid`');
 
 
 ### Create a new entity
-my $id = $st->create('chairs', { my => 'chair' });
+my $id = $st->create('chairs', { my => 'chair' }, { user => 'me' });
 ok($id, "created with ID $id");
 
 
@@ -40,7 +40,7 @@ cmp_deeply(
     version    => 1,
     created_at => ignore(),
     event_type => 'c',
-    meta       => {},
+    meta       => { user => 'me' },
     state      => 'a',
   }
 );
@@ -53,7 +53,7 @@ cmp_deeply(
   $events->[0],
   { entity_type => 'chairs',
     created_at  => ignore(),
-    event_meta  => {},
+    event_meta  => { user => 'me' },
     entity_id   => '1',
     event_type  => 'c',
     version     => 1
