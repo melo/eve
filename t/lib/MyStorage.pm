@@ -5,12 +5,18 @@ use strict;
 use warnings;
 use parent 'X::Storage';
 
-our $master_id_gen = 1;
 
-__PACKAGE__->register(
-  'chairs',
-  { id => sub { shift; return ($master_id_gen++, @_) }
+#### Chairs type
+
+{
+  our $master_id_gen = 1;
+
+  sub _chairs_id {
+    my ($type, @rest) = @_;
+    return ($master_id_gen++, @rest);
   }
-);
+
+  __PACKAGE__->register('chairs', '_chairs');
+}
 
 1;

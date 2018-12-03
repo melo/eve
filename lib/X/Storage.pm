@@ -32,6 +32,8 @@ sub connect {
     my ($class, $type, $ops) = @_;
     $class = blessed($class) if blessed($class);
 
+    $ops = _calc_ops_from_caller($ops, (caller())[0]) unless ref($ops);
+
     my $r_ops = $registry{$class}{$type} ||= {};
     $registry{$class}{$type} = {
       marshal   => sub { return encode_json($_[0]) },
@@ -40,6 +42,20 @@ sub connect {
     };
 
     return;
+  }
+
+  sub _calc_ops_from_caller {
+    my ($prefix, $class) = @_;
+    my %ops;
+
+    for my $m (qw( id before after deploy marshal unmarshal )) {
+      my $op = $class->can("${prefix}_$m");
+      next unless $op;
+
+      $ops{$m} = $op;
+    }
+
+    return \%ops;
   }
 
   sub types {
