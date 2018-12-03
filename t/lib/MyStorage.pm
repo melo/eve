@@ -23,7 +23,7 @@ use parent 'X::Storage';
       $driver->sql_insert('chairs', { entity_id => $meta->{id}, legs => $blob->{legs}, material => $blob->{material} });
     }
     elsif ($op eq 'update') {
-      $driver->sql_insert(
+      $driver->sql_update(
         'chairs',
         { legs      => $blob->{legs}, material => $blob->{material} },
         { entity_id => $meta->{id} }

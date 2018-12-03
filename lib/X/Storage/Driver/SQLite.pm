@@ -39,6 +39,36 @@ sub _do_create {
   return 1;    ## the version
 }
 
+sub _do_update {
+  my ($self, $type, $id, $new_version, $blob, $meta) = @_;
+  my $db = $self->{db};
+
+
+  $self->sql_tx(
+    sub {
+      $self->sql_update(
+        'ent_current',
+        { version   => $new_version, entity_blob => $blob },
+        { entity_id => $id,          entity_type => $type }
+      );
+
+      my $sth = $db->prepare('
+        INSERT INTO ent_events
+               (entity_id, entity_type, version, event_blob, event_meta, event_type)
+        VALUES (?,         ?,           ?,       ?,          ?,          "u")
+      ');
+      $sth->bind_param(1, $id,   SQL_BLOB);
+      $sth->bind_param(2, $type, SQL_BLOB);
+      $sth->bind_param(3, $new_version);
+      $sth->bind_param(4, $blob, SQL_BLOB);
+      $sth->bind_param(5, $meta, SQL_BLOB);
+      $sth->execute();
+
+      return 1;
+    }
+  );
+}
+
 sub _do_fetch {
   my ($self, $type, $id) = @_;
 

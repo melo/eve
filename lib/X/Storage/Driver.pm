@@ -63,6 +63,41 @@ sub create {
   return $id;
 }
 
+sub update {
+  my ($self, $type, $id, $blob, $meta, $version_lock) = @_;
+  my $ops  = $self->{registry}->ops_for_type($type);
+  my $mrsh = $ops->{marshal};
+
+  my ($new_version, $error);
+  $self->sql_tx(
+    sub {
+      my ($old_blob, $old_meta) = $self->fetch($type, $id);    ## SQLite doesn't have SELET ... FOR UPDATE
+      if ($version_lock and $old_meta->{version} != $version_lock) {
+        $new_version = $old_meta->{version};
+        $error       = 'optimistic_lock_failed';
+        return;
+      }
+
+      $new_version = $old_meta->{version} + 1;
+
+      $meta ||= {};
+      $blob ||= {};
+
+      $ops->{before}->($self, 'update', $blob, { id => $id, type => $type, version => $new_version, meta => $meta })
+        if exists $ops->{before};
+      $self->_do_update($type, $id, $new_version, $mrsh->($blob), $mrsh->($meta));
+      $ops->{after}->($self, 'update', $blob, { id => $id, type => $type, version => $new_version, meta => $meta })
+        if exists $ops->{after};
+
+      return 1;
+    }
+  );
+
+  return ($new_version, $error) if wantarray;
+  return if $error;
+  return $new_version;
+}
+
 sub fetch {
   my ($self, $type, $id) = @_;
   my $ops  = $self->{registry}->ops_for_type($type);
