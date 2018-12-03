@@ -46,6 +46,10 @@ cmp_deeply(
 );
 
 
+### Make sure denorm is up-to-date
+cmp_deeply($st->sql_first('SELECT * FROM chairs'), { entity_id => $id, legs => 4, material => 'wood' }, 'denorm ok');
+
+
 ### List all events
 my $events = $st->events('chairs', $id);
 is(scalar(@$events), 1, 'got correct number of events');
