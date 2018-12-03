@@ -3,7 +3,7 @@ package    ## Hide from PAUSE
 
 use strict;
 use warnings;
-use parent 'X::Storage';
+use parent 'Eve';
 
 
 #### Chairs type

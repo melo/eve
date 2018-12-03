@@ -1,4 +1,4 @@
-package X::Storage;
+package Eve;
 
 use strict;
 use warnings;
@@ -14,8 +14,8 @@ sub connect {
   my ($class, $dsn, @options) = @_;
 
   if ($dsn =~ m/^dbi:SQLite:/) {
-    require X::Storage::Driver::SQLite;
-    return X::Storage::Driver::SQLite->_build($class, $dsn, @options);
+    require Eve::Driver::SQLite;
+    return Eve::Driver::SQLite->_build($class, $dsn, @options);
   }
 
   croak "DSN not recognized '$dsn'";

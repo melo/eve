@@ -1,4 +1,4 @@
-package X::Storage::Driver;
+package Eve::Driver;
 
 use strict;
 use warnings;

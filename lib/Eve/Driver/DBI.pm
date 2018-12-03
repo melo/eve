@@ -1,8 +1,8 @@
-package X::Storage::Driver::DBI;
+package Eve::Driver::DBI;
 
 use strict;
 use warnings;
-use parent 'X::Storage::Driver';
+use parent 'Eve::Driver';
 use DBIx::Transaction;
 
 

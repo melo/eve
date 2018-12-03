@@ -1,8 +1,8 @@
-package X::Storage::Driver::SQLite;
+package Eve::Driver::SQLite;
 
 use strict;
 use warnings;
-use parent 'X::Storage::Driver::DBI';
+use parent 'Eve::Driver::DBI';
 use DBI qw(:sql_types);
 
 sub _do_create {
