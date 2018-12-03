@@ -18,14 +18,14 @@ ok(!$obj, 'no chairs found with ID `noid`');
 
 
 ### Create a new entity
-my $id = $st->create('chairs', { my => 'chair' }, { user => 'me' });
+my $id = $st->create('chairs', { my => 'chair', legs => 4, material => 'wood' }, { user => 'me' });
 ok($id, "created with ID $id");
 
 
 ### Fetch it
 $obj = $st->fetch('chairs', $id);
 ok($obj, "fetch($id) worked now");
-cmp_deeply($obj, { my => 'chair' });
+cmp_deeply($obj, { my => 'chair', legs => 4, material => 'wood' });
 
 
 ### Fetch it with Meta
