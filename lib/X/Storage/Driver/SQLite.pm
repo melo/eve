@@ -40,8 +40,7 @@ sub _do_create {
 sub _do_fetch {
   my ($self, $type, $id) = @_;
 
-  my $db  = $self->{db};
-  my $row = $db->selectrow_arrayref('
+  my $rows = $self->sql_select('
     SELECT c.version, c.entity_blob, c.state,
            e.event_meta, e.created_at, e.event_type
       FROM ent_current AS c
@@ -53,24 +52,23 @@ sub _do_fetch {
                 )
      WHERE c.entity_id   = CAST(? AS BLOB)
        AND c.entity_type = CAST(? AS BLOB)
-  ', undef, $id, $type);
+  ', $id, $type);
 
-  return unless defined $row;
+  return unless defined $rows and @$rows;
 
-  my ($v, $b, $s, $m, $c, $t) = @$row;
-  return ($b, $m, { version => $v, created_at => $c, state => $s, event_type => $t });
+  my $r = $rows->[0];
+  return (delete($r->{entity_blob}), delete($r->{event_meta}), $r);
 }
 
 sub _do_events {
   my ($self, $type, $id) = @_;
-  my $db = $self->{db};
 
-  return $db->selectall_arrayref('
+  return $self->sql_select('
     SELECT entity_id, version, entity_type, event_type, event_meta, created_at
       FROM ent_events
      WHERE entity_type = CAST(? AS BLOB)
        AND entity_id   = CAST(? AS BLOB)
-  ', { Slice => {} }, $type, $id);
+  ', $type, $id);
 }
 
 
@@ -79,9 +77,8 @@ sub _do_events {
 
 sub _do_deploy {
   my ($self) = @_;
-  my $db = $self->{db};
 
-  $db->do(
+  $self->sql_do(
     q{
     CREATE TABLE IF NOT EXISTS ent_events (
         entity_id     BLOB(16)         NOT NULL,
@@ -99,7 +96,7 @@ sub _do_deploy {
   }
   );
 
-  $db->do(
+  $self->sql_do(
     q{
     CREATE TABLE IF NOT EXISTS ent_current (
         entity_id     BINARY(16)       NOT NULL,
