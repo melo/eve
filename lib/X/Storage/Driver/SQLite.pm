@@ -42,7 +42,7 @@ sub _do_create {
 sub _do_fetch {
   my ($self, $type, $id) = @_;
 
-  my $rows = $self->sql_select('
+  my $r = $self->sql_first('
     SELECT c.version, c.entity_blob, c.state,
            e.event_meta, e.created_at, e.event_type
       FROM ent_current AS c
@@ -56,9 +56,8 @@ sub _do_fetch {
        AND c.entity_type = CAST(? AS BLOB)
   ', $id, $type);
 
-  return unless defined $rows and @$rows;
+  return unless defined $r;
 
-  my $r = $rows->[0];
   return (delete($r->{entity_blob}), delete($r->{event_meta}), $r);
 }
 

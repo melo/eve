@@ -37,6 +37,14 @@ sub sql_select {
   return $dbh->selectall_arrayref($sql, { Slice => {} }, @bind);
 }
 
+sub sql_first {
+  my ($self, $sql, @bind) = @_;
+  my $rows = $self->sql_select($sql, @bind);
+
+  return unless @$rows;
+  return $rows->[0];
+}
+
 sub sql_insert {
   my ($self, $table, $spec) = @_;
   my $db = $self->{db};
