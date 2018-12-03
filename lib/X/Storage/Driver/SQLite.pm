@@ -2,17 +2,8 @@ package X::Storage::Driver::SQLite;
 
 use strict;
 use warnings;
-use parent 'X::Storage::Driver';
-use DBIx::Transaction;
+use parent 'X::Storage::Driver::DBI';
 use DBI qw(:sql_types);
-
-sub connect {
-  my ($self, $dsn) = @_;
-
-  $self->{db} = DBIx::Transaction->connect($dsn, "", "", { RaiseError => 1, AutoCommit => 1 });
-
-  return $self;
-}
 
 sub _do_create {
   my ($self, $type, $id, $blob, $meta) = @_;
