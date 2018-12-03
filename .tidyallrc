@@ -1,0 +1,12 @@
+[PerlTidy general]
+select = lib/**/*.{pl,pm,t}
+select = t/**/*.{pl,pm,t}
+ignore = local/**
+
+[PerlTidy cpanfiles]
+select = **/cpanfile
+ignore = local/**
+
+[PodTidy]
+argv = --column=100
+select = lib/**/*.{pm,pod}
