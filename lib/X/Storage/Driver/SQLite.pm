@@ -9,7 +9,7 @@ sub _do_create {
   my ($self, $type, $id, $blob, $meta) = @_;
   my $db = $self->{db};
 
-  $db->transaction(
+  $self->sql_tx(
     sub {
       my $sth = $db->prepare('
       INSERT INTO ent_current
@@ -31,6 +31,8 @@ sub _do_create {
       $sth->bind_param(3, $blob, SQL_BLOB);
       $sth->bind_param(4, $meta, SQL_BLOB);
       $sth->execute();
+
+      return 1;
     }
   );
 

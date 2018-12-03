@@ -24,6 +24,12 @@ sub connect {
 #############
 # SQL helpers
 
+sub sql_tx {
+  my ($self, $cb) = @_;
+
+  return $self->{db}->transaction($cb);
+}
+
 sub sql_select {
   my ($self, $sql, @bind) = @_;
   my $dbh = $self->{db};
