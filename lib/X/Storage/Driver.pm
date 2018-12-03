@@ -49,9 +49,11 @@ sub create {
   ($id, $blob, $meta) = $ops->{id}->($type, $blob || {}, $meta || {});
   $self->sql_tx(
     sub {
-      $ops->{before}->($self, 'create', $blob, { id => $id, type => $type, meta => $meta }) if exists $ops->{before};
+      $ops->{before}->($self, 'create', $blob, { id => $id, type => $type, version => 1, meta => $meta })
+        if exists $ops->{before};
       $self->_do_create($type, $id, $mrsh->($blob), $mrsh->($meta));
-      $ops->{after}->($self, 'create', $blob, { id => $id, type => $type, meta => $meta }) if exists $ops->{after};
+      $ops->{after}->($self, 'create', $blob, { id => $id, type => $type, version => 1, meta => $meta })
+        if exists $ops->{after};
 
       return 1;
     }
